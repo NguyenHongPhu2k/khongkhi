@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="module">
+
+
+
+//Firebase code
+    //Config values to ba adapted!
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js";
+    const firebaseConfig = {
+    apiKey: "AIzaSyB4AQohzuoGIoJ8yaZz-q8BbBlbe3S1s6Y",
+    authDomain: "hongphu-doan.firebaseapp.com",
+    databaseURL: "https://hongphu-doan-default-rtdb.firebaseio.com",
+    projectId: "hongphu-doan",
+    storageBucket: "hongphu-doan.appspot.com",
+    messagingSenderId: "634646302",
+    appId: "1:634646302:web:babbf526c880c59942230f",
+    measurementId: "G-8RTLLL820S"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  import {getDatabase, ref, get, set, onValue, child, update, remove} 
+  from "https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js";
+        const db = getDatabase();
+
+        var Btn3 = document.getElementById("btn3")
+  
+
+
+
+window.onload = function () {
+
+var dps = []; // dataPoints
+var chart = new CanvasJS.Chart("chartContainer", {
+	title :{
+		text: "Biểu đồ không khí"
+	},
+	data: [{
+		type: "line",
+		dataPoints: dps
+	}]
+});
+
+var xVal = 0;
+var yVal = 100; 
+var updateInterval = 1000;
+var dataLength = 20; // number of dataPoints visible at any point
+
+var updateChart = function (count) {
+
+	count = count || 1;
+
+    
+    const getkhongkhi = ref(db, 'taolao/Không khí' );
+onValue(getkhongkhi, (snapshot) => {
+ const khongkhinhan = snapshot.val();
+  document.getElementById("khongkhi").innerText = khongkhinhan+" PPM";
+
+    
+
+
+
+  
+
+
+ 
+ var c = khongkhinhan;
+  
+ for (var j = 0; j < count; j++) {
+
+const dd = Number(c)
+
+var d = new Date();
+
+xVal = d;
+
+yVal =dd;
+dps.push({
+    x: xVal,
+    y: yVal
+});
+xVal++;
+}
+
+});
+
+	
+
+	if (dps.length > dataLength) {
+		dps.shift();
+	}
+
+	chart.render();
+};
+
+updateChart(dataLength);
+setInterval(function(){updateChart()}, updateInterval);
+
+
+
+
+}
+
+
+  
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 370px; width:100%;"></div>
+
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<h1><b>Không khí</b></h1>
+<h1 id ="khongkhi"></h1>
+<p id="time"></p>
+</body>
+</html>
